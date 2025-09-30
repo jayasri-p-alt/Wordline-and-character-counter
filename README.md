@@ -1,51 +1,41 @@
-# Wordline-and-character-counter
-Making word line and character counter using file handling
 #include <stdio.h>
-#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 
 int main() {
-    FILE *fp;
-    char filename[100];
+    char text[1000];
+    int i, words = 0, lines = 0, characters = 0;
+
+    printf("Enter text (end input with '~'):\n");
+
+    // Read input until '~'
+    i = 0;
     char ch;
-    int lines = 0, words = 0, characters = 0;
-    int inWord = 0;
-
-    // Ask user for file name
-    printf("Enter filename: ");
-    scanf("%s", filename);
-
-    // Open file
-    fp = fopen(filename, "r");
-    if (fp == NULL) {
-        printf("Error: Cannot open file %s\n", filename);
-        exit(1);
+    while ((ch = getchar()) != '~' && i < 999) {
+        text[i++] = ch;
     }
+    text[i] = '\0';
 
-    // Read file character by character
-    while ((ch = fgetc(fp)) != EOF) {
-        characters++;
+    // Count characters, words, and lines
+    characters = strlen(text);
 
-        if (ch == '\n')
+    for (i = 0; text[i] != '\0'; i++) {
+        if (text[i] == '\n')
             lines++;
-
-        if (isspace(ch)) {
-            inWord = 0;
-        } else if (!inWord) {
-            inWord = 1;
+        if ((isspace(text[i]) || text[i+1] == '\0') && 
+            (i > 0 && !isspace(text[i-1]))) {
             words++;
         }
     }
 
-    fclose(fp);
-
-    // If file not empty, add last line
-    if (characters > 0 && ch == EOF)
+    // If text contains at least one line
+    if (characters > 0)
         lines++;
 
-    printf("Lines      : %d\n", lines);
-    printf("Words      : %d\n", words);
-    printf("Characters : %d\n", characters);
+    printf("\n--- Count Result ---\n");
+    printf("Characters: %d\n", characters);
+    printf("Words     : %d\n", words);
+    printf("Lines     : %d\n", lines);
 
     return 0;
 }
